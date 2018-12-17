@@ -10,17 +10,45 @@ const universe = get_universe();
 const width = universe.width();
 const height = universe.height();
 
+//Keep track of animation id
+let animationId = null;
+const playPauseButton = document.getElementById("play-pause");
+const isPaused = () => {
+    return animationId === null;
+}
+
+const play = () => {
+    playPauseButton.textContent = "⏸";
+    renderLoop();
+}
+
+const pause = () => {
+    playPauseButton.textContent = "▶";
+    cancelAnimationFrame(animationId);
+    animationId = null;
+}
+
+playPauseButton.addEventListener("click", event => {
+    if (isPaused()) {
+        play();
+    }else{
+        pause();
+    }
+});
+
 const canvas = document.getElementById("game-of-life-canvas");
 canvas.height = (CELL_SIZE + 1) * height + 1;
 canvas.width = (CELL_SIZE + 1) * width + 1;
 const ctx = canvas.getContext('2d');
 
 const renderLoop = () => {
+    debugger;
     universe.tick();
+
     drawGrids();
     drawCells();
 
-    requestAnimationFrame(renderLoop);
+    animationId = requestAnimationFrame(renderLoop);
 }
 
 const drawGrids = () => {
@@ -72,7 +100,5 @@ const drawCells = () => {
     ctx.stroke();
 }
 
-//start rendering loop
-drawGrids();
-drawCells();
-requestAnimationFrame(renderLoop);
+
+play();
